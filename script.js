@@ -4,7 +4,6 @@
 // Else if user input corresponds to a pokemon, show it
 
 // UI variables
-
 const userInput = document.getElementById("search-input");
 const searchButton = document.getElementById("search-button");
 // const userInput = document.getElementById();
@@ -12,10 +11,18 @@ const searchButton = document.getElementById("search-button");
 // const userInput = document.getElementById();
 // const userInput = document.getElementById();
 
-// other variables
 
-// array of all pokemon objects
-async function getPokemonArr() {
+const reset = () => {
+	document.getElementById("search-input").value = "";
+}
+
+const getUserInput = (input) => {
+	const lowerCaseInput = input.toLowerCase();
+	return lowerCaseInput;
+}
+
+// get array of all pokemon objects
+async function getPokemonArr(searchQuery) {
 	const url = "https://pokeapi-proxy.freecodecamp.rocks/api/pokemon";
 	try {
 		const res = await fetch(url);
@@ -23,25 +30,28 @@ async function getPokemonArr() {
 			throw new Error(`Error! Response status: ${res.status}`);
 		}
 		const json = await res.json();
-		// console.log(json);
-		console.log(json.results[0].name);
+		const pokemonArr = json.results;
+		findPokemon(searchQuery, pokemonArr);
 	} catch (err) {
 		console.error(err.message);
 	}
+	return 1;
 }
 
-const getUserInput = (input) => {
-	const lowerCaseInput = input.toLowerCase();
-	// console.log(lowerCaseInput);
-	return lowerCaseInput;
-}
-
-const reset = () => {
-	document.getElementById("search-input").value = "";
+// search for a Pokemon with a name or ID matching the entered query
+const findPokemon = (query, arr) => {
+	for (let i = 0, j = arr.length; i < j; i++) {
+		if (arr[i].name === query || arr[i].id === parseInt(query)) {
+			console.log(`Found Pokemon: ${arr[i].name}`);
+			return `Found Pokemon: ${arr[i].name}`;
+		}
+	}
+	console.log("Not found");
+	return "Not found";
 }
 
 searchButton.addEventListener("click", () => {
-	getUserInput(userInput.value);
-	getPokemonArr();
+	const input = getUserInput(userInput.value);
+	getPokemonArr(input);
 	reset();
 });
