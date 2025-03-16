@@ -1,8 +1,3 @@
-// PSEUDOCODE
-// Clean user input received from search box: lowercase it
-// If user input includes any characters other than a-z and hyphen, return "not found" message
-// Else if user input corresponds to a pokemon, show it
-
 // UI variables
 const userInput = document.getElementById("search-input");
 const searchButton = document.getElementById("search-button");
@@ -16,42 +11,49 @@ const reset = () => {
 	document.getElementById("search-input").value = "";
 }
 
-const getUserInput = (input) => {
-	const lowerCaseInput = input.toLowerCase();
-	return lowerCaseInput;
-}
-
-// get array of all pokemon objects
+// search for queried Pokemon
 async function getPokemonArr(searchQuery) {
-	const url = "https://pokeapi-proxy.freecodecamp.rocks/api/pokemon";
+	const url = `https://pokeapi-proxy.freecodecamp.rocks/api/pokemon/${searchQuery}`;
 	try {
 		const res = await fetch(url);
 		if (!res.ok) {
+			alert("Pokemon not found.");
 			throw new Error(`Error! Response status: ${res.status}`);
 		}
-		const json = await res.json();
-		const pokemonArr = json.results;
-		findPokemon(searchQuery, pokemonArr);
+		const pokemonDetails = await res.json();
+		console.log(pokemonDetails);
+		if (!pokemonDetails) {
+			console.log("Not found");
+			return 1;
+		}
+		displayPokemon(pokemonDetails);
+		return 0;
 	} catch (err) {
 		console.error(err.message);
 	}
 	return 1;
 }
 
-// search for a Pokemon with a name or ID matching the entered query
-const findPokemon = (query, arr) => {
-	for (let i = 0, j = arr.length; i < j; i++) {
-		if (arr[i].name === query || arr[i].id === parseInt(query)) {
-			console.log(`Found Pokemon: ${arr[i].name}`);
-			return `Found Pokemon: ${arr[i].name}`;
-		}
+// display details on requested Pokemon
+const displayPokemon = (pokemon) => {
+	console.log(`Pokemon name: ${pokemon.name.toUpperCase()}`);
+	console.log(`Pokemon ID: #${pokemon.id}`);
+	console.log(`Pokemon weight: ${pokemon.weight}`);
+	console.log(`Pokemon height: ${pokemon.height}`);
+	const types = [];
+	for (let i = 0; i < pokemon.types.length; i++) {
+		types.push(pokemon.types[i].type.name);
 	}
-	console.log("Not found");
-	return "Not found";
+	console.log("Pokemon types: " + types.join(", "));
+	console.log(`Pokemon HP: ${pokemon.stats[0].base_stat}`);
+	console.log(`Pokemon attack: ${pokemon.stats[1].base_stat}`);
+	console.log(`Pokemon defense: ${pokemon.stats[2].base_stat}`);
+	console.log(`Pokemon special attack: ${pokemon.stats[3].base_stat}`);
+	console.log(`Pokemon special defense: ${pokemon.stats[4].base_stat}`);
+	console.log(`Pokemon speed: ${pokemon.stats[5].base_stat}`);
 }
 
 searchButton.addEventListener("click", () => {
-	const input = getUserInput(userInput.value);
-	getPokemonArr(input);
+	getPokemonArr(userInput.value.toLowerCase());
 	reset();
 });
