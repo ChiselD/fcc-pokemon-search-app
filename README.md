@@ -1,5 +1,10 @@
 This is the "Pokémon Search App" certification project from the freeCodeCamp curriculum (all my own original code).
 
+WORK IN PROGRESS: This project is functional but has no styling.
+You can preview it at the link below:
+
+https://htmlpreview.github.io/?https://github.com/ChiselD/fcc-pokemon-search-app/blob/main/index.html
+
 Objective: Build an app that is functionally similar to:
 https://pokemon-search-app.freecodecamp.rocks
 
